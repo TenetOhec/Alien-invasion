@@ -4,6 +4,7 @@ import pygame
 
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 class AlienInvasion:
 	"""管理游戏资源和行为的类"""
@@ -21,7 +22,9 @@ class AlienInvasion:
 			self.settings.screen_height = self.screen.get_rect().height
 		
 		pygame.display.set_caption("Alien Invasion")
+
 		self.ship = Ship(self)
+		self.bullets = pygame.sprite.Group()
 
 	
 	def run_game(self):
@@ -30,6 +33,7 @@ class AlienInvasion:
 			#监视键盘和鼠标事件
 			self._check_events()
 			self.ship.update()
+			self.bullets.update()
 			self._update_screen()		
 
 		
@@ -51,6 +55,8 @@ class AlienInvasion:
 			self.ship.moving_left = True
 		elif event.key == pygame.K_q:
 			sys.exit()
+		elif event.key ==pygame.K_SPACE:
+			self._fire_bullet()	
 
 	def _check_keyup_events(self,event):
 		"""响应松开"""
@@ -59,10 +65,17 @@ class AlienInvasion:
 		elif event.key == pygame.K_LEFT:
 			self.ship.moving_left = False
 
+	def _fire_bullet(self):
+		"""创建一颗子弹，并将其加入编组bullets中"""
+		new_bullet = Bullet(self)
+		self.bullets.add(new_bullet)		
+
 	def _update_screen(self):
 		"""更新屏幕上的图像，并切换到新屏幕"""
 		self.screen.fill(self.settings.bg_color)
 		self.ship.blitme()
+		for bullet in self.bullets.sprites():
+			bullet.draw_bullet()
 
 		pygame.display.flip()				
     
