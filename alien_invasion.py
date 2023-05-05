@@ -61,8 +61,31 @@ class AlienInvasion:
 					self._check_keydown_events(event)	
 				elif event.type == pygame.KEYUP:
 					self._check_keyup_events(event)
+				elif event.type == pygame.MOUSEBUTTONDOWN:
+					mouse_pos = pygame.mouse.get_pos()
+					self._check_play_button(mouse_pos)
+
+	def _check_play_button(self,mouse_pos):
+		"""在玩家单机play按钮时开始新游戏"""
+		button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+		if button_clicked and not self.stats.game_active:
+			#重置游戏统计信息
+			self.settings.initialize_dynamic_settings()
+			self.stats.reset_stats()
+			self.stats.game_active = True	
+
+			#清空余下的外星人和子弹
+			self.aliens.empty()
+			self.bullets.empty()
+
+			#创建一群新的外星人并让飞船居中
+			self._create_fleet()
+			self.ship.center_ship()	
+
+			#隐藏鼠标光标
+			pygame.mouse.set_visible(False)			
 					
-	def _check_keydown_events(self,event):
+	def _check_keydown_events(self, event):
 		"""响应按键"""
 		if event.key == pygame.K_RIGHT:
 			self.ship.moving_right = True
@@ -108,6 +131,7 @@ class AlienInvasion:
 			#创建现有的子弹并新建一群外星人
 			self.bullets.empty()
 			self._create_fleet()
+			self.settings.increase_speed()
 
 
 	def _update_aliens(self):
@@ -148,7 +172,8 @@ class AlienInvasion:
 			#暂停
 			sleep(0.5)			
 		else:
-			self.stats.game_active = False		
+			self.stats.game_active = False
+			pygame.mouse.set_visible(True)		
 			
 
 	def _create_fleet(self):
