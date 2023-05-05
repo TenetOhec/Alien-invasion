@@ -11,6 +11,11 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 
+"""
+Version: 0.1
+Author: Zwm
+Date: 2023-5-5
+"""
 class AlienInvasion:
 	"""管理游戏资源和行为的类"""
 	
